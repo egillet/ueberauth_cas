@@ -36,7 +36,13 @@ defmodule Ueberauth.Strategy.CAS.API do
   end
 
   defp validate_url do
-    settings(:base_url) <> "/serviceValidate"
+    # A different URL can be specified for service_validate.
+    # This is useful for development in docker containers.
+    base_url = case settings(:service_validate_base_url) do
+      nil -> settings(:base_url)
+      u -> u
+    end
+    base_url <> "/serviceValidate"
   end
 
   defp settings(key) do
