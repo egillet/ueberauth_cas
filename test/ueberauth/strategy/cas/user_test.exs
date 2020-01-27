@@ -22,8 +22,17 @@ defmodule Ueberauth.Strategy.CAS.User.Test do
       </cas:authenticationSuccess>
     </cas:serviceResponse>
     """
-
-    {:ok, xml: xml}
+    bad_xml = """
+    <cas:foobar xmlns:cas="http://www.yale.edu/tp/cas">
+          <cas:authenticationDate>2016-06-29T21:53:41Z</cas:authenticationDate>
+          <cas:longTermAuthenticationRequestTokenUsed>false</cas:longTermAuthenticationRequestTokenUsed>
+          <cas:isFromNewLogin>true</cas:isFromNewLogin>
+          </cas:roles>
+        </cas:attributes>
+      </cas:authenticationSuccess>
+    </cas:serviceResponse>
+    """
+    {:ok, xml: xml, bad_xml: bad_xml}
   end
 
   test "generates user from xml", %{xml: xml} do
@@ -33,4 +42,13 @@ defmodule Ueberauth.Strategy.CAS.User.Test do
     assert user.roles == ["developer", "admin"]
     assert user.name == user.email
   end
+
+  # test "generates no user from bad xml", %{bad_xml: bad_xml} do
+  #   user = User.from_xml(bad_xml)
+
+  #   assert user.email == nil
+  #   assert user.roles == ["developer", "admin"]
+  #   assert user.name == user.email
+  # end
+
 end

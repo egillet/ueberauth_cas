@@ -19,11 +19,18 @@ defmodule Ueberauth.Strategy.CAS.User do
   defp set_roles(user, _body), do: %User{user | roles: ["developer", "admin"]}
 
   defp email(body) do
-    Floki.find(body, "cas|user")
+    case Floki.parse_document(body) do
+      {:ok, document} -> email_from_floki_doc(document)
+      {_, _} -> nil
+    end
+  end
+
+  defp email_from_floki_doc(document) do
+    Floki.find(document, "cas|user")
     |> List.first
     |> Tuple.to_list
     |> List.last
     |> List.first
-    |> String.downcase
+    |> String.downcase  
   end
 end
