@@ -1,7 +1,15 @@
 # Überauth CAS Strategy
 
+
 Central Authentication Service strategy for Überauth.
 Forked from [marceldegraaf/ueberauth_cas](https://github.com/marceldegraaf/ueberauth_cas).
+
+Forked from [kljensen/ueberauth_cas](https://github.com/kljensen/ueberauth_cas) in order to add some flexibility to the User definition:
+  • the cas:serviceResponse is parsed in order to build the User map: the <cas:user> is converted in the :uid of the User (and then the uid of the Uberaut.Auth); all the <cas:attributes> are converted in field of the User map.
+  • in some case one can use a json inside the <cas:attributes> to defined the User fields. In order to be able to use this approach an option json_attributes: is available to indicate which attribute contains the json (eg. "cas:data")
+  • another option is avaliable:  :credential_keys, which is a list of atoms used to build the 'other' field of the Ueberauth.Auth.Credentials map --- the fields are extracted from the User map
+
+
 
 ## Installation
 

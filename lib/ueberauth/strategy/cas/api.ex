@@ -14,17 +14,17 @@ defmodule Ueberauth.Strategy.CAS.API do
   @doc "Validate a CAS Service Ticket with the CAS server."
   def validate_ticket(ticket, conn) do
     HTTPoison.get(validate_url(), [], params: %{ticket: ticket, service: callback_url(conn)})
-    |> handle_validate_ticket_response()
+    |> handle_validate_ticket_response(Ueberauth.Strategy.Helpers.options(conn))
   end
 
-  defp handle_validate_ticket_response({:ok, %HTTPoison.Response{status_code: 200, body: body}}) do
+  defp handle_validate_ticket_response({:ok, %HTTPoison.Response{status_code: 200, body: body}}, opts) do
     case String.match?(body, ~r/cas:authenticationFailure/) do
       true -> {:error, error_from_body(body)}
-      _    -> {:ok, CAS.User.from_xml(body)}
+      _    -> {:ok, CAS.User.from_xml(body, opts)}
     end
   end
 
-  defp handle_validate_ticket_response({:error, %HTTPoison.Error{reason: reason}}) do
+  defp handle_validate_ticket_response({:error, %HTTPoison.Error{reason: reason}}, _opts) do
     {:error, reason}
   end
 

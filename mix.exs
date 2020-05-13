@@ -31,7 +31,7 @@ defmodule UeberauthCAS.Mixfile do
     [
       {:ueberauth, "~> 0.6.2"},
       {:httpoison, "~> 0.13.0"},
-      {:floki, "~> 0.25.0"},
+      {:sweet_xml, "~> 0.6.6"},
       {:excoveralls, "~> 0.12.2", only: :test},
       {:inch_ex, "~> 0.5.6", only: :docs},
       {:earmark, "~> 1.4.3", only: :dev},

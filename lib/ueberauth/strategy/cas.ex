@@ -61,7 +61,7 @@ defmodule Ueberauth.Strategy.CAS do
   end
 
   @doc "Ueberauth UID callback."
-  def uid(conn), do: conn.private.cas_user.email
+  def uid(conn), do: conn.private.cas_user.uid
 
   @doc """
   Ueberauth extra information callback. Returns all information the CAS
@@ -80,11 +80,14 @@ defmodule Ueberauth.Strategy.CAS do
   """
   def info(conn) do
     user = conn.private.cas_user
-
-    %Info{
-      name: user.name,
-      email: user.email
-    }
+    info = %Info{}
+    Map.keys(info)
+    |> Enum.reduce(info, fn k, acc ->
+        case Map.fetch(user, k) do
+          {:ok, v} -> Map.put acc, k, v
+          :error -> acc
+        end
+    end)
   end
 
   @doc """
@@ -94,7 +97,7 @@ defmodule Ueberauth.Strategy.CAS do
     %Credentials{
       expires: false,
       token: conn.private.cas_ticket,
-      other: conn.private.cas_user.roles,
+      other: conn.private.cas_user.credentials,
     }
   end
 
@@ -119,7 +122,7 @@ defmodule Ueberauth.Strategy.CAS do
     |> set_errors!([error("error", message)])
   end
 
-  defp handle_validate_ticket_response({:ok, %CAS.User{} = user}, conn) do
+  defp handle_validate_ticket_response({:ok, %{uid: _, credentials: _} = user}, conn) do
     conn
     |> put_private(:cas_user, user)
   end
