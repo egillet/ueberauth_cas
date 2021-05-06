@@ -20,7 +20,14 @@ defmodule Ueberauth.Strategy.CAS.API do
   defp handle_validate_ticket_response({:ok, %HTTPoison.Response{status_code: 200, body: body}}, opts) do
     case String.match?(body, ~r/cas:authenticationFailure/) do
       true -> {:error, error_from_body(body)}
-      _    -> {:ok, CAS.User.from_xml(body, opts)}
+      _    -> 
+        {_, default_opts} = Application.get_env(:ueberauth, Ueberauth)[:providers][:cas]
+        merged_opts = if is_nil(opts) do
+          default_opts
+        else
+          Keyword.merge(default_opts, opts)
+        end
+        {:ok, CAS.User.from_xml(body, merged_opts)}
     end
   end
 
