@@ -43,9 +43,6 @@ defmodule Ueberauth.Strategy.CAS do
     |> handle_ticket(ticket)
   end
 
-  @doc """
-  Ueberauth after login callback missing a CAS Service Ticket.
-  """
   def handle_callback!(conn) do
     conn
     |> set_errors!([error("missing_ticket", "No service ticket received")])

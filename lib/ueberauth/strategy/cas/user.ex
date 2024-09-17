@@ -5,7 +5,7 @@ defmodule Ueberauth.Strategy.CAS.User do
   import SweetXml
   require Record
   require Jason
-  
+
   def from_xml(body, opts) do
     xml = parse(body)
     %{}
@@ -14,22 +14,22 @@ defmodule Ueberauth.Strategy.CAS.User do
     |> add_credentials(opts)
   end
 
-  defp set_uid(user, xml) do 
+  defp set_uid(user, xml) do
     Map.put user, :uid, (xpath(xml, ~x"//cas:user/text()") |> to_string())
   end
-  
-  defp add_credentials(user, opts) do 
+
+  defp add_credentials(user, opts) do
     upd_user = case Map.fetch(user, :name) do
       {:ok, _} -> user
       :error -> Map.put user, :name, user.uid
     end
     case Keyword.fetch(opts, :credential_keys) do
       {:ok, keys} when is_list(keys) ->
-        cred = Enum.reduce(keys, %{}, fn k, acc -> 
+        cred = Enum.reduce(keys, %{}, fn k, acc ->
           Map.put acc, k, Map.get(user, k)
         end)
         Map.put upd_user, :credentials, cred
-      _ -> 
+      _ ->
         upd_user
     end
   end
@@ -57,15 +57,15 @@ defmodule Ueberauth.Strategy.CAS.User do
     upd_user
     |> add_xml_attributes(xml, jfield)
   end
-  
-  
+
+
   defp add_xml_attributes(user, xml, excluded_attr) do
-    excluded = if is_nil(excluded_attr), do: nil, else: String.to_atom(excluded_attr) 
+    excluded = if is_nil(excluded_attr), do: nil, else: String.to_atom(excluded_attr)
     el_attr =  xpath(xml, ~x"//cas:attributes")
     Enum.filter(xmlElement(el_attr, :content), fn child ->
       Record.is_record(child, :xmlElement)
     end)
-    |> Enum.reduce(user, fn raw_attr, acc -> 
+    |> Enum.reduce(user, fn raw_attr, acc ->
       attr = xmlElement(raw_attr)
       if Keyword.get(attr, :name) != excluded do
         {_ns, key } = Keyword.get attr, :nsinfo

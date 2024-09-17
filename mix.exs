@@ -1,14 +1,14 @@
 defmodule UeberauthCAS.Mixfile do
   use Mix.Project
 
-  @version "1.1.0"
+  @version "1.1.1"
   @url     "https://github.com/marceldegraaf/ueberauth_cas"
 
   def project do
     [
       app: :ueberauth_cas,
       version: @version,
-      elixir: "~> 1.2",
+      elixir: "~> 1.7",
       name: "Ueberauth CAS strategy",
       package: package(),
       build_embedded: Mix.env == :prod,
@@ -29,14 +29,15 @@ defmodule UeberauthCAS.Mixfile do
 
   defp deps do
     [
-      {:ueberauth, "~> 0.6.2"},
-      {:httpoison, "~> 1.0"},
-      {:sweet_xml, "~> 0.6.6"},
-      {:excoveralls, "~> 0.12.2", only: :test},
-      {:inch_ex, "~> 0.5.6", only: :docs},
-      {:earmark, "~> 1.4.3", only: :dev},
-      {:ex_doc, "~> 0.21.2", only: :dev},
-      {:mock, "~> 0.3.4", only: :test},
+      {:ueberauth, "~> 0.10"},
+      {:httpoison, "~> 2.2"},
+      {:sweet_xml, "~> 0.7"},
+      {:excoveralls, "~> 0.8", only: :test},
+      {:inch_ex, "~> 2.0", only: :docs},
+      {:earmark, "~> 1.4", only: :dev},
+      {:ex_doc, "~> 0.34", only: :dev},
+      {:mock, "~> 0.3", only: :test},
+      {:jason, "~> 1.4"},
     ]
   end
 
